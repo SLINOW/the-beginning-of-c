@@ -3,6 +3,26 @@
  */
 #include <stdio.h>
 
+/** 日付を表す構造体 */
+typedef struct {
+  /** 年 */
+  int year;
+  /** 月 */
+  int month;
+  /** 日 */
+  int day;
+} time_t;
+
+/** 星座の条件を表す構造体 */
+typedef struct {
+  /** 開始日 (この日を含む) */
+  time_t from;
+  /** 終了日 (この日を含む) */
+  time_t to;
+  /** 星座名 */
+  char* name;
+} condition_t;
+
 /**
  * 与えられた年が閏年であるかどうかを返します.
  *
@@ -51,47 +71,145 @@ int how_many_days_in(int year, int month) {
   }
 }
 
-int withIn(int from_month, int from_day, int to_month, int to_day, int )
+/**
+ * 1900年1月1日からの経過日数を返します.
+ * @param time 計算させたい日付
+ * @return 1900年1月1日からの経過日数. ただし,1900年1月1日は1日目とする.
+ */
+int year_day(time_t time) {
+  int yday = 0;
+  int y, m;
+  /* 1990年1月1日から (year - 1)年の経過日数の計算 */
+  for (y = 1900; y < time.year; y++) {
+    for (m = 1; m < 12; m++) {
+      yday += how_many_days_in(y, m);
+    }
+  }
+  /* year 年1月1日から year 年 month 月の月末までの経過日数を足す */
+  for (m = 1; m < time.month; m++) {
+    yday += how_many_days_in(time.year, m);
+  }
+  /* 最後に day 日を足す */
+  yday += time.day;
+  return yday;
+}
+
+/**
+ * 日付(time_t)の比較を行う.
+ * @param judge 基準となる月日
+ * @param when 指定される月日
+ * @return 基準となる日付が指定された日付よりも以前にある場合 1, それ以外は 0 を返す.
+ * ただし,日付が等しいときに1になることに注意すること.
+ */
+int isInBefore(time_t judge, time_t when) {
+  return year_day(judge) <= year_day(when) ? 1 : 0;
+}
+
+/**
+ * 日付が指定された日の間にあるかどうかを判定します.
+ * @param judge_time 判定日
+ * @param from_time 開始日
+ * @param to_time 終了日
+ * @return 判定日が開始日と終了日にの間に入っている場合 1, それ以外の場合 0.
+ */
+int withIn(time_t judge_time, time_t from_time, time_t to_time) {
+  return (isInBefore(from_time, judge_time) == 1 && isInBefore(judge_time, to_time) == 1) ? 1 : 0;
+}
+
+/**
+ * 与えられた日付が有効なものかを判定します.
+ * @param time 判断日
+ * @return 有効なものである場合: 1, 有効でない場合: 0
+ * 有効であるとは,
+ */
+int is_valid(time_t time) {
+  /* 月のバリデーション */
+  if (!(1 <= time.month && time.month <= 12)) {
+    return 0;
+  }
+  /* 日のバリデーション */
+  if (!(1 <= time.day && time.day <= how_many_days_in(time.year, time.month))) {
+    return 0;
+  }
+  return 1;
+}
+
+/**
+ * 与えられた日付と条件を判断し,条件を満たすかを返します.
+ * @param time 日付
+ * @param condition 条件
+ * @return 条件を満たす場合: 1 / 満たさない場合: 0
+ */
+int judge(time_t time, condition_t condition) {
+  if (withIn(time, condition.from, condition.to)) {
+    return 1;
+  }
+  return 0;
+}
 
 int main() {
-  int month = 1, day = 1;
+  int year = 2024, month = 1, day = 1;
+  time_t time = {
+    year, month, day
+  };
+  time_t adjustment_time = {
+    year, 3, 21
+  };
+  int diff = isInBefore(time, adjustment_time) == 1 ? -1 : 0;
+  /* 判断に用いるデータ */
+  time_t f_aries = { year + diff, 3, 21 };
+  time_t t_aries = { year + diff, 4, 19 };
+  time_t f_taurus = { year + diff, 4, 20 };
+  time_t t_taurus = { year + diff, 5, 20 };
+  time_t f_gemini = { year + diff, 5, 21 };
+  time_t t_gemini = { year + diff, 6, 21 };
+  time_t f_cancer = { year + diff, 6, 22 };
+  time_t t_cancer = { year + diff, 7, 22 };
+  time_t f_leo = { year + diff, 7, 23 };
+  time_t t_leo = { year + diff, 8, 22 };
+  time_t f_virgo = { year + diff, 8, 23 };
+  time_t t_virgo = { year + diff, 9, 22 };
+  time_t f_libra = { year + diff, 9, 23 };
+  time_t t_libra = { year + diff, 10, 23 };
+  time_t f_scorpio = { year + diff, 10, 24 };
+  time_t t_scorpio = { year + diff, 11, 22 };
+  time_t f_sagittarius = { year + diff, 11, 23 };
+  time_t t_sagittarius = { year + diff, 12, 21 };
+  time_t f_capricorn = { year + diff, 12, 22 };
+  time_t t_capricorn = { year + diff + 1, 1, 19 };
+  time_t f_aquarius = { year + diff + 1, 1, 20 };
+  time_t t_aquarius = { year + diff + 1, 2, 18 };
+  time_t f_pisces = { year + diff + 1, 2, 19 };
+  time_t t_pisces = { year + diff + 1, 3, 20 };
+
+  condition_t aries = { f_aries, t_aries, "おひつじ座" };
+  condition_t taurus = { f_taurus, t_taurus, "おうし座" };
+  condition_t gemini = { f_gemini, t_gemini, "ふたご座" };
+  condition_t cancer = { f_cancer, t_cancer, "かに座" };
+  condition_t leo = { f_leo, t_leo, "しし座" };
+  condition_t virgo = { f_virgo, t_virgo, "おとめ座" };
+  condition_t libra = { f_libra, t_libra, "てんびん座" };
+  condition_t scorpio = { f_scorpio, t_scorpio, "さそり座" };
+  condition_t sagittarius = { f_sagittarius, t_sagittarius, "いて座" };
+  condition_t capricorn = { f_capricorn, t_capricorn, "やぎ座" };
+  condition_t aquarius = { f_aquarius, t_aquarius, "みずがめ座" };
+  condition_t pisces = { f_pisces, t_pisces, "うお座" };
+
+  condition_t conditions[] = {
+    aries, taurus, gemini, cancer, leo, virgo,
+    libra, scorpio, sagittarius, capricorn, aquarius, pisces
+  };
 
   /* 入力バリデーション */
-  /* 日は月によって違うのでそれも確かめる (閏年も含むとして考えておく) */
-  int is_valid = 1; /* 日が有効かどうかのフラグ (0: 不正 / 1: 正常) */
-  switch (month) {
-    case 4:
-    case 6:
-    case 9:
-    case 11:
-      if (!(1 <= day && day <= 30)) {
-        is_valid = 0;
-      }
-      break;
-    case 2:
-      if (!(1 <= day && day <= 29)) {
-        is_valid = 0;
-      }
-      break;
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12:
-      if (!(1 <= day && day <= 31)) {
-        is_valid = 0;
-      }
-    default:
-      /* ここに到達した時点で,ありえない月であることがわかる */
-      is_valid = 0;
-      break;
+  if (is_valid(time) == 0) {
+    printf("%d月%d日: 正しい月日を指定してください", time.month, time.day);
+    return 0;
   }
 
-  /* 不正な月日だったらエラーメッセージを出しておく */
-  if (is_valid == 0) {
-    printf("%d月%d日: 正しい月日を指定してください", month, day);
-    return 0;
+  int i;
+  for (i = 0; i < 12; i++) {
+    if (judge(time, conditions[i]) == 1) {
+      printf("%d月%d日は%s\n", time.month, time.day, conditions[i].name);
+    }
   }
 }
