@@ -155,6 +155,7 @@ int main() {
   time_t adjustment_time = {
     year, 3, 21
   };
+  /* 3月21日よりも前の日付が入力された場合,年の軸を1年ずらす必要がある */
   int diff = isInBefore(time, adjustment_time) == 1 ? -1 : 0;
   /* 判断に用いるデータ */
   time_t f_aries = { year + diff, 3, 21 };
