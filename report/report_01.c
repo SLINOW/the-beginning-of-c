@@ -11,14 +11,14 @@ typedef struct {
   int month;
   /** 日 */
   int day;
-} time_t;
+} date_t;
 
 /** 星座の条件を表す構造体 */
 typedef struct {
   /** 開始日 (この日を含む) */
-  time_t from;
+  date_t from;
   /** 終了日 (この日を含む) */
-  time_t to;
+  date_t to;
   /** 星座名 */
   char* name;
 } condition_t;
@@ -73,62 +73,61 @@ int how_many_days_in(int year, int month) {
 
 /**
  * 1900年1月1日からの経過日数を返します.
- * @param time 計算させたい日付
+ * @param date 計算させたい日付
  * @return 1900年1月1日からの経過日数. ただし,1900年1月1日は1日目とする.
  */
-int year_day(time_t time) {
+int year_day(date_t date) {
   int yday = 0;
   int y, m;
   /* 1990年1月1日から (year - 1)年の経過日数の計算 */
-  for (y = 1900; y < time.year; y++) {
+  for (y = 1900; y < date.year; y++) {
     for (m = 1; m < 12; m++) {
       yday += how_many_days_in(y, m);
     }
   }
   /* year 年1月1日から year 年 month 月の月末までの経過日数を足す */
-  for (m = 1; m < time.month; m++) {
-    yday += how_many_days_in(time.year, m);
+  for (m = 1; m < date.month; m++) {
+    yday += how_many_days_in(date.year, m);
   }
   /* 最後に day 日を足す */
-  yday += time.day;
+  yday += date.day;
   return yday;
 }
 
 /**
- * 日付(time_t)の比較を行う.
- * @param judge 基準となる月日
+ * 日付(date_t)の比較を行う.
+ * @param judge_date 基準となる月日
  * @param when 指定される月日
- * @return 基準となる日付が指定された日付よりも以前にある場合 1, それ以外は 0 を返す.
+ * @return 基準となる日付が指定された日付以前にある場合 1, それ以外は 0 を返す.
  * ただし,日付が等しいときに1になることに注意すること.
  */
-int isInBefore(time_t judge, time_t when) {
-  return year_day(judge) <= year_day(when) ? 1 : 0;
+int isInBefore(date_t judge_date, date_t when) {
+  return year_day(judge_date) <= year_day(when) ? 1 : 0;
 }
 
 /**
  * 日付が指定された日の間にあるかどうかを判定します.
- * @param judge_time 判定日
- * @param from_time 開始日
- * @param to_time 終了日
+ * @param judge_date 判定日
+ * @param from_date 開始日
+ * @param to_date 終了日
  * @return 判定日が開始日と終了日にの間に入っている場合 1, それ以外の場合 0.
  */
-int withIn(time_t judge_time, time_t from_time, time_t to_time) {
-  return (isInBefore(from_time, judge_time) == 1 && isInBefore(judge_time, to_time) == 1) ? 1 : 0;
+int withIn(date_t judge_date, date_t from_date, date_t to_date) {
+  return (isInBefore(from_date, judge_date) == 1 && isInBefore(judge_date, to_date) == 1) ? 1 : 0;
 }
 
 /**
  * 与えられた日付が有効なものかを判定します.
- * @param time 判断日
+ * @param date 判断日
  * @return 有効なものである場合: 1, 有効でない場合: 0
- * 有効であるとは,
  */
-int is_valid(time_t time) {
+int is_valid(date_t date) {
   /* 月のバリデーション */
-  if (!(1 <= time.month && time.month <= 12)) {
+  if (!(1 <= date.month && date.month <= 12)) {
     return 0;
   }
   /* 日のバリデーション */
-  if (!(1 <= time.day && time.day <= how_many_days_in(time.year, time.month))) {
+  if (!(1 <= date.day && date.day <= how_many_days_in(date.year, date.month))) {
     return 0;
   }
   return 1;
@@ -136,12 +135,12 @@ int is_valid(time_t time) {
 
 /**
  * 与えられた日付と条件を判断し,条件を満たすかを返します.
- * @param time 日付
+ * @param date 日付
  * @param condition 条件
  * @return 条件を満たす場合: 1 / 満たさない場合: 0
  */
-int judge(time_t time, condition_t condition) {
-  if (withIn(time, condition.from, condition.to)) {
+int judge(date_t date, condition_t condition) {
+  if (withIn(date, condition.from, condition.to)) {
     return 1;
   }
   return 0;
@@ -149,39 +148,39 @@ int judge(time_t time, condition_t condition) {
 
 int main() {
   int year = 2024, month = 1, day = 1;
-  time_t time = {
+  date_t time = {
     year, month, day
   };
-  time_t adjustment_time = {
+  date_t adjustment_time = {
     year, 3, 21
   };
   /* 3月21日よりも前の日付が入力された場合,年の軸を1年ずらす必要がある */
   int diff = isInBefore(time, adjustment_time) == 1 ? -1 : 0;
   /* 判断に用いるデータ */
-  time_t f_aries = { year + diff, 3, 21 };
-  time_t t_aries = { year + diff, 4, 19 };
-  time_t f_taurus = { year + diff, 4, 20 };
-  time_t t_taurus = { year + diff, 5, 20 };
-  time_t f_gemini = { year + diff, 5, 21 };
-  time_t t_gemini = { year + diff, 6, 21 };
-  time_t f_cancer = { year + diff, 6, 22 };
-  time_t t_cancer = { year + diff, 7, 22 };
-  time_t f_leo = { year + diff, 7, 23 };
-  time_t t_leo = { year + diff, 8, 22 };
-  time_t f_virgo = { year + diff, 8, 23 };
-  time_t t_virgo = { year + diff, 9, 22 };
-  time_t f_libra = { year + diff, 9, 23 };
-  time_t t_libra = { year + diff, 10, 23 };
-  time_t f_scorpio = { year + diff, 10, 24 };
-  time_t t_scorpio = { year + diff, 11, 22 };
-  time_t f_sagittarius = { year + diff, 11, 23 };
-  time_t t_sagittarius = { year + diff, 12, 21 };
-  time_t f_capricorn = { year + diff, 12, 22 };
-  time_t t_capricorn = { year + diff + 1, 1, 19 };
-  time_t f_aquarius = { year + diff + 1, 1, 20 };
-  time_t t_aquarius = { year + diff + 1, 2, 18 };
-  time_t f_pisces = { year + diff + 1, 2, 19 };
-  time_t t_pisces = { year + diff + 1, 3, 20 };
+  date_t f_aries = {year + diff, 3, 21 };
+  date_t t_aries = {year + diff, 4, 19 };
+  date_t f_taurus = {year + diff, 4, 20 };
+  date_t t_taurus = {year + diff, 5, 20 };
+  date_t f_gemini = {year + diff, 5, 21 };
+  date_t t_gemini = {year + diff, 6, 21 };
+  date_t f_cancer = {year + diff, 6, 22 };
+  date_t t_cancer = {year + diff, 7, 22 };
+  date_t f_leo = {year + diff, 7, 23 };
+  date_t t_leo = {year + diff, 8, 22 };
+  date_t f_virgo = {year + diff, 8, 23 };
+  date_t t_virgo = {year + diff, 9, 22 };
+  date_t f_libra = {year + diff, 9, 23 };
+  date_t t_libra = {year + diff, 10, 23 };
+  date_t f_scorpio = {year + diff, 10, 24 };
+  date_t t_scorpio = {year + diff, 11, 22 };
+  date_t f_sagittarius = {year + diff, 11, 23 };
+  date_t t_sagittarius = {year + diff, 12, 21 };
+  date_t f_capricorn = {year + diff, 12, 22 };
+  date_t t_capricorn = {year + diff + 1, 1, 19 };
+  date_t f_aquarius = {year + diff + 1, 1, 20 };
+  date_t t_aquarius = {year + diff + 1, 2, 18 };
+  date_t f_pisces = {year + diff + 1, 2, 19 };
+  date_t t_pisces = {year + diff + 1, 3, 20 };
 
   condition_t aries = { f_aries, t_aries, "おひつじ座" };
   condition_t taurus = { f_taurus, t_taurus, "おうし座" };

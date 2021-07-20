@@ -14,7 +14,4 @@ int main() {
   } else {
     printf("%d際はお酒が飲めません\n", age);
   }
-  if (age > 0) {
-
-  }
 }
