@@ -34,7 +34,7 @@
         - [十二支の判定](ex/exe06.c)
         - [十干十二支の判定](ex/exe06_1.c)
         - [誕生日と任意の日付から,その時点での年齢を出力する](ex/exe06_2_normal.c)
-            - [(分かる人向け)関数を用いた別解](ex/exe06_2_advanced.c)
+            - [(分かる人向け)関数を用いて厳密性を高めた別解](ex/exe06_2_advanced.c)
     - [演習7:判別式]
         - [判別式の判定](ex/exe07.c)
 
@@ -46,6 +46,7 @@
     - [演算](summer_homework/summer_02.c)
 - [〜9/29までの課題]
     - [指定された日の星座を表示する](report/report_01.c)
+        - [(分かる人向け)関数を用いて厳密性・拡張性を高めた別解](report/report_01_advanced.c)
 
 <a id="tips"></a>
 ## Tips
