@@ -8,14 +8,14 @@ int main() {
 
   if (year % 400 == 0) {
     /* 年が400で割り切れたら閏年 */
-    printf("%d年は閏年です", year);
+    printf("%d年は閏年です\n", year);
   } else if (year % 100 == 0) {
     /* 年が100で割り切れたら閏年でない */
-    printf("%d年は閏年ではないです", year);
+    printf("%d年は閏年ではないです\n", year);
   } else if (year % 4 == 0) {
     /* 年が4で割り切れたら閏年 */
-    printf("%d年は閏年です", year);
+    printf("%d年は閏年です\n", year);
   } else {
-    printf("%d年は閏年ではないです", year);
+    printf("%d年は閏年ではないです\n", year);
   }
 }
