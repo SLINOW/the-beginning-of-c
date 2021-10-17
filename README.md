@@ -76,6 +76,12 @@
 - [〜9/29までの課題]
     - [指定された日の星座を表示する](report/report_01.c)
         - [(分かる人向け)関数を用いて厳密性・拡張性を高めた別解](report/report_01_advanced.c)
+- [〜11/4までの課題]
+  - [初項ではない初期値の漸化式](report_repeat/loop_report1.c)
+  - [フィボナッチ数列](report_repeat/loop_report2.c)
+  - [一部がくり抜かれた長方形](report_repeat/loop_report3.c)
+  - [最大公約数(ユークリッドの互除法)](report_repeat/loop_report4.c)
+  - [円周率の近似](report_repeat/loop_report5.c)
 
 <a id="tips"></a>
 ## Tips
