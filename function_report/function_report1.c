@@ -1,6 +1,3 @@
-/*
- * Created by karayuu on 2021/11/18.
- */
 #include <stdio.h>
 
 int calc_sequence(int arg1, int arg2, int arg3) {

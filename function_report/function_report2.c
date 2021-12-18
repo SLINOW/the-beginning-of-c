@@ -1,6 +1,3 @@
-/*
- * Created by karayuu on 2021/11/18.
- */
 #include <stdio.h>
 
 void calc(float x, float y, char op) {
