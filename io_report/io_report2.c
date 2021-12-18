@@ -12,7 +12,7 @@ int main() {
   float input;
 
   /* EOF まで読み続ける */
-  while (scanf("%c%f", &operation, &input) != EOF) {
+  while (scanf("%c%*c%f%*c", &operation, &input) != EOF) {
     /* 演算子のチェック */
     if (!(operation == '+' || operation == '-' || operation == '*' || operation == '/')) {
       printf("エラー：演算子ではない。\n");
