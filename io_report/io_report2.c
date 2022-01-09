@@ -1,7 +1,3 @@
-//
-// Created by karayuu on 2021/12/17.
-//
-
 #include <stdio.h>
 
 int main() {
